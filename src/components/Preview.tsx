@@ -115,7 +115,7 @@ export default function Preview() {
             </div>
           </div>
           <div
-            className="bg-white overflow-auto max-h-[600px]"
+            className="bg-white overflow-auto max-h-150"
             dangerouslySetInnerHTML={{ __html: PREVIEW_HTML }}
           />
         </div>
