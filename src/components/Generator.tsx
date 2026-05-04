@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Copy, Download, Check, AlertCircle } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  Download,
+  Check,
+  AlertCircle,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import {
   type FormValues,
   generateScript,
@@ -75,6 +84,7 @@ export default function Generator() {
   const [form, setForm] = useState<FormValues>(INITIAL);
   const [generated, setGenerated] = useState<{ code: string; manifest: string } | null>(null);
   const [errors, setErrors] = useState<Partial<FormValues>>({});
+  const [showPw, setShowPw] = useState<Partial<Record<keyof FormValues, boolean>>>({});
 
   const validate = () => {
     const e: Partial<FormValues> = {};
@@ -105,30 +115,46 @@ export default function Generator() {
     placeholder: string,
     type = "text",
     required = false
-  ) => (
-    <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-      <input
-        id={id}
-        type={type}
-        value={form[id]}
-        onChange={(e) => setForm((prev) => ({ ...prev, [id]: e.target.value }))}
-        placeholder={placeholder}
-        className={`w-full px-3.5 py-2.5 rounded-lg border text-sm outline-none transition-colors ${
-          errors[id]
-            ? "border-red-400 focus:border-red-500 bg-red-50"
-            : "border-gray-200 focus:border-[#0052CC] bg-white"
-        }`}
-      />
-      {errors[id] && (
-        <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
-          <AlertCircle size={11} /> {errors[id] as string}
-        </p>
-      )}
-    </div>
-  );
+  ) => {
+    const isPassword = type === "password";
+    const inputType = isPassword && showPw[id] ? "text" : type;
+    return (
+      <div>
+        <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+          {label} {required && <span className="text-red-500">*</span>}
+        </label>
+        <div className="relative">
+          <input
+            id={id}
+            type={inputType}
+            value={form[id]}
+            onChange={(e) => setForm((prev) => ({ ...prev, [id]: e.target.value }))}
+            placeholder={placeholder}
+            className={`w-full px-3.5 py-2.5 rounded-lg border text-sm outline-none transition-colors ${isPassword ? "pr-10" : ""} ${
+              errors[id]
+                ? "border-red-400 focus:border-red-500 bg-red-50"
+                : "border-gray-200 focus:border-[#0052CC] bg-white"
+            }`}
+          />
+          {isPassword && form[id] && (
+            <button
+              type="button"
+              onClick={() => setShowPw((p) => ({ ...p, [id]: !p[id] }))}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label={showPw[id] ? "숨기기" : "보기"}
+            >
+              {showPw[id] ? <EyeOff size={15} /> : <Eye size={15} />}
+            </button>
+          )}
+        </div>
+        {errors[id] && (
+          <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+            <AlertCircle size={11} /> {errors[id] as string}
+          </p>
+        )}
+      </div>
+    );
+  };
 
   return (
     <section id="generator" className="py-20 bg-gray-50">
@@ -154,7 +180,7 @@ export default function Generator() {
               {field("name", "이름", "홍길동", "text", true)}
               {field("position", "직책", "주임 / 대리 / 과장", "text", true)}
               {field("department", "소속", "플랫폼 본부", "text", true)}
-              {field("email", "이메일", "hong@company.com", "email", true)}
+              {field("email", "Jira 계정 이메일", "hong@company.com", "email", true)}
             </div>
           </div>
 
@@ -291,28 +317,6 @@ export default function Generator() {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50">
                 <div>
-                  <p className="font-bold text-gray-900">Code.gs</p>
-                  <p className="text-xs text-gray-400 mt-0.5">Google Apps Script 메인 파일</p>
-                </div>
-                <div className="flex gap-2">
-                  <CopyButton text={generated.code} label="복사" />
-                  <button
-                    type="button"
-                    onClick={() => downloadFile(generated.code, "Code.gs")}
-                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-[#0052CC] text-white hover:bg-[#0747A6] transition-colors"
-                  >
-                    <Download size={13} /> 다운로드
-                  </button>
-                </div>
-              </div>
-              <pre className="p-5 text-xs text-gray-700 overflow-auto max-h-64 leading-relaxed bg-gray-50 font-mono">
-                {generated.code.slice(0, 800)}...
-              </pre>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50">
-                <div>
                   <p className="font-bold text-gray-900">appscript.json</p>
                   <p className="text-xs text-gray-400 mt-0.5">Apps Script 매니페스트 파일</p>
                 </div>
@@ -329,6 +333,28 @@ export default function Generator() {
               </div>
               <pre className="p-5 text-xs text-gray-700 overflow-auto max-h-40 leading-relaxed bg-gray-50 font-mono">
                 {generated.manifest}
+              </pre>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50">
+                <div>
+                  <p className="font-bold text-gray-900">Code.gs</p>
+                  <p className="text-xs text-gray-400 mt-0.5">Google Apps Script 메인 파일</p>
+                </div>
+                <div className="flex gap-2">
+                  <CopyButton text={generated.code} label="복사" />
+                  <button
+                    type="button"
+                    onClick={() => downloadFile(generated.code, "Code.gs")}
+                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-[#0052CC] text-white hover:bg-[#0747A6] transition-colors"
+                  >
+                    <Download size={13} /> 다운로드
+                  </button>
+                </div>
+              </div>
+              <pre className="p-5 text-xs text-gray-700 overflow-auto leading-relaxed bg-gray-50 font-mono">
+                {generated.code}
               </pre>
             </div>
 

@@ -3,6 +3,7 @@ import Features from "./components/Features";
 import HowItWorks from "./components/HowItWorks";
 import Preview from "./components/Preview";
 import Generator from "./components/Generator";
+import RegisterGuide from "./components/RegisterGuide";
 import Footer from "./components/Footer";
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
       <HowItWorks />
       <Preview />
       <Generator />
+      <RegisterGuide />
       <Footer />
     </main>
   );

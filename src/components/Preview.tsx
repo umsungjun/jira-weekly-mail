@@ -63,7 +63,7 @@ const PREVIEW_HTML = `
         </tbody>
       </table>
     </div>
-    <div>
+    <div style="margin-top:20px;">
       <div style="margin-bottom:8px;padding:8px 14px;background:#fff;border-left:4px solid #FF8B00;border-radius:0 6px 6px 0;">
         <span style="font-size:13px;font-weight:700;color:#1a1a2e;">예정 업무</span>
         <span style="margin-left:8px;background:#FF8B00;color:#fff;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:600;">2건</span>

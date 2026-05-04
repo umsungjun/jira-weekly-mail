@@ -32,13 +32,13 @@ export default function HowItWorks() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">사용 방법</h2>
           <p className="text-gray-500 text-lg">3단계로 자동화 완성</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 items-stretch">
           {steps.map((step, i) => (
-            <div key={step.number} className="relative">
+            <div key={step.number} className="relative flex">
               {i < steps.length - 1 && (
                 <div className="hidden md:block absolute top-8 left-full w-full h-px bg-gray-200 z-0 translate-x-[-50%]" />
               )}
-              <article className="relative bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center">
+              <article className="relative bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center w-full">
                 <div
                   className={`text-4xl font-black ${step.color} mb-4 border-b-2 ${step.border} inline-block pb-1`}
                 >
