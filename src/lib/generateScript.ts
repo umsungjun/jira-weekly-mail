@@ -45,6 +45,7 @@ const STATUS_KO = {
   "In Review": "검토 중",
   Testing: "테스트 중",
   "To Do": "예정",
+  "Selected for Development": "개발 예정",
   Open: "열림",
   Backlog: "백로그",
 };
@@ -132,7 +133,7 @@ function generateAiSummary(issues) {
 
 function fetchIssues() {
   const token = Utilities.base64Encode(\`\${config.email}:\${config.apiToken}\`);
-  const jql = \`assignee = "\${config.email}" AND (created >= startOfWeek() OR updated >= startOfWeek()) ORDER BY updated DESC\`;
+  const jql = \`assignee = "\${config.email}" AND (status = "Selected for Development" OR created >= startOfWeek() OR updated >= startOfWeek()) ORDER BY updated DESC\`;
   const fields = [
     "summary",
     "status",
