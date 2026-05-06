@@ -25,8 +25,6 @@ const INITIAL: FormValues = {
   atlassianURL: "",
   apiToken: "",
   geminiApiKey: "",
-  siteField: "",
-  categoryField: "",
 };
 
 function AccordionGuide({ title, children }: { title: string; children: React.ReactNode }) {
@@ -277,28 +275,6 @@ export default function Generator() {
                 />
               </AccordionGuide>
             </div>
-          </div>
-
-          {/* 선택 설정 */}
-          <div className="px-8 py-7 border-b border-gray-100">
-            <h3 className="font-bold text-gray-900 mb-1 text-base">선택 설정</h3>
-            <p className="text-xs text-gray-400 mb-4">Jira 커스텀 필드 ID — 없으면 비워두세요</p>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {field("siteField", "사이트 필드 ID", "customfield_10100")}
-              {field("categoryField", "카테고리 필드 ID", "customfield_10200")}
-            </div>
-            <AccordionGuide title="📋 커스텀 필드 ID 확인 방법">
-              <Step
-                n={1}
-                text={
-                  <>
-                    Jira 관리자 → <strong>이슈</strong> → <strong>필드</strong> 메뉴 접속
-                  </>
-                }
-              />
-              <Step n={2} text="원하는 커스텀 필드의 '스크린' 또는 '컨텍스트' 클릭" />
-              <Step n={3} text="URL에서 customfield_XXXXX 형태의 ID 확인 후 입력" />
-            </AccordionGuide>
           </div>
 
           <div className="px-8 py-6">

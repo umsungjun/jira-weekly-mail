@@ -6,14 +6,9 @@ export interface FormValues {
   atlassianURL: string;
   apiToken: string;
   geminiApiKey: string;
-  siteField: string;
-  categoryField: string;
 }
 
 export const generateScript = (v: FormValues): string => {
-  const siteField = v.siteField ? `"${v.siteField}"` : "null";
-  const categoryField = v.categoryField ? `"${v.categoryField}"` : "null";
-
   return `const config = {
   name: "${v.name}",
   position: "${v.position}",
@@ -22,8 +17,6 @@ export const generateScript = (v: FormValues): string => {
   atlassianURL: "${v.atlassianURL.replace(/\/$/, "")}",
   apiToken: "${v.apiToken}",
   geminiApiKey: "${v.geminiApiKey}",
-  siteField: ${siteField},
-  categoryField: ${categoryField},
 };
 
 const ISSUE_TYPE_KO = {
@@ -82,15 +75,14 @@ function generateAiSummary(issues) {
       const project = f.project?.name || "-";
       const components = (f.components || []).map((c) => c.name).join(", ") || "-";
       const labels = (f.labels || []).join(", ") || "-";
-      const site = (config.siteField && f[config.siteField]?.value) || "-";
-      return \`- [\${i.key}] 프로젝트:\${project} | 구분:\${type} | 상태:\${status} | 컴포넌트:\${components} | 레이블:\${labels} | 사이트:\${site}\\n  제목: \${f.summary}\`;
+      return \`- [\${i.key}] 프로젝트:\${project} | 구분:\${type} | 상태:\${status} | 컴포넌트:\${components} | 레이블:\${labels}\\n  제목: \${f.summary}\`;
     })
     .join("\\n");
 
   const prompt = \`당신은 개발팀 리포터입니다. 아래는 \${config.name} \${config.position}의 이번 주 Jira 업무 목록입니다.
 
 다음 두 가지를 중심으로 4~6줄의 자연스러운 한국어 문장으로 작성해 주세요:
-1. 이번 주 어떤 사이트나 프로젝트에 집중했는지 (컴포넌트·레이블·사이트 필드 기준으로 패턴 파악)
+1. 이번 주 어떤 프로젝트에 집중했는지 (컴포넌트·레이블 기준으로 패턴 파악)
 2. 어떤 방향의 개발을 하고 있는지 (기능 추가인지, 버그 수정인지, 리팩토링인지, 안정화인지 등 의도 파악)
 
 마지막에 완료·진행·예정 건수를 한 줄로 요약해 주세요.
@@ -145,9 +137,6 @@ function fetchIssues() {
     "labels",
     "components",
   ];
-  if (config.siteField) fields.push(config.siteField);
-  if (config.categoryField) fields.push(config.categoryField);
-
   const res = UrlFetchApp.fetch(\`\${config.atlassianURL}/rest/api/3/search/jql\`, {
     method: "POST",
     headers: {
@@ -179,7 +168,6 @@ function buildRow(issue) {
   const f = issue.fields;
   const typeKo = ISSUE_TYPE_KO[f.issuetype?.name] || f.issuetype?.name || "-";
   const statusKo = STATUS_KO[f.status?.name] || f.status?.name || "-";
-  const site = (config.siteField && f[config.siteField]?.value) || f.labels?.[0] || "-";
   const dueDate = f.duedate ? f.duedate.replace(/-/g, ".") : "-";
 
   const td = "padding:10px 12px;border-bottom:1px solid #F0F0F0;text-align:center;";
@@ -192,7 +180,6 @@ function buildRow(issue) {
     <td style="\${td}white-space:nowrap;">
       <span style="padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;\${getStatusBadge(f.status?.name)}">\${statusKo}</span>
     </td>
-    <td style="\${td}font-size:12px;color:#555;white-space:nowrap;">\${site}</td>
     <td style="\${td}font-size:12px;color:#888;white-space:nowrap;">\${dueDate}</td>
   </tr>\`;
 }
@@ -201,7 +188,7 @@ function buildSection(title, accent, issues) {
   const count = issues.length;
   const rows =
     count === 0
-      ? \`<tr><td colspan="6" style="text-align:center;padding:20px;color:#bbb;font-size:13px;">해당 업무가 없습니다.</td></tr>\`
+      ? \`<tr><td colspan="5" style="text-align:center;padding:20px;color:#bbb;font-size:13px;">해당 업무가 없습니다.</td></tr>\`
       : issues.map(buildRow).join("");
 
   const th =
@@ -211,7 +198,6 @@ function buildSection(title, accent, issues) {
     <th style="\${th}width:12%;">이슈</th>
     <th style="\${th}text-align:left;">요약</th>
     <th style="\${th}width:10%;">상태</th>
-    <th style="\${th}width:10%;">사이트</th>
     <th style="\${th}width:9%;">마감일</th>\`;
 
   return \`
