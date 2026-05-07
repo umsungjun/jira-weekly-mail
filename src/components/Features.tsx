@@ -12,7 +12,7 @@ const features = [
     icon: <Bot size={28} className="text-[#6366f1]" />,
     title: "Gemini AI 업무 요약",
     description:
-      "Gemini 2.5 Flash가 이슈 목록을 분석해 어떤 사이트·프로젝트에 집중했는지, 어떤 방향으로 개발 중인지를 자연스러운 문장으로 요약합니다.",
+      "Gemini 2.5 Flash가 이슈 목록을 분석해 어떤 사이트·프로젝트에 집중했는지, 어떤 방향으로 개발 중인지를 자연스러운 문장으로 요약합니다. API 오류 시 최대 3회 재시도하며, 실패해도 이메일은 정상 발송됩니다.",
     bg: "bg-indigo-50",
   },
   {
