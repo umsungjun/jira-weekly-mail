@@ -27,7 +27,7 @@
 ## 핵심 기능
 
 - **Jira 자동 연동** — 이번 주 할당된 이슈를 JQL로 자동 수집, 완료·진행·예정 상태별 분류
-- **Gemini AI 업무 요약** — 어떤 사이트/프로젝트에 집중했는지, 어떤 개발 방향인지를 AI가 자연스러운 문장으로 요약 (선택 사항)
+- **Gemini AI 업무 요약** — 어떤 사이트/프로젝트에 집중했는지, 어떤 개발 방향인지를 AI가 자연스러운 문장으로 요약 (선택 사항). API 오류 시 최대 3회 재시도하며, 모두 실패해도 AI 요약 없이 이메일이 정상 발송됩니다.
 - **HTML 이메일 자동 발송** — Google Apps Script `MailApp`으로 별도 서버 없이 이메일 발송
 - **스크립트 생성기** — 정보를 입력하면 `Code.gs`와 `appscript.json` 두 파일을 브라우저에서 바로 생성
 
@@ -107,50 +107,11 @@ Google Apps Script 메인 실행 파일입니다. Jira API 호출, Gemini AI 요
 | `sendToMe()`          | 본인 이메일로 테스트 발송    |
 | `sendToAll()`         | 전체 메일링 리스트로 발송    |
 | `fetchIssues()`       | Jira API로 이번 주 이슈 수집 |
-| `generateAiSummary()` | Gemini API로 업무 요약 생성  |
+| `generateAiSummary()` | Gemini API로 업무 요약 생성 (실패 시 3회 재시도) |
 
 ### `appscript.json`
 
 Google Apps Script 프로젝트 매니페스트 파일입니다. 타임존(Asia/Seoul), OAuth 권한 범위, 런타임 버전(V8)이 설정되어 있습니다.
-
----
-
-## 커스텀 필드 설정 방법
-
-사이트 구분, 카테고리 등 Jira 커스텀 필드를 보고서에 포함하려면:
-
-1. Jira 관리자 → **이슈** → **필드** 메뉴 접속
-2. 원하는 커스텀 필드의 **스크린** 또는 **컨텍스트** 클릭
-3. URL에서 `customfield_XXXXX` 형태의 ID 확인
-4. 스크립트 생성 폼의 **선택 설정**에 해당 ID 입력
-
----
-
-## 프로젝트 구조
-
-```
-jira-reporter/
-├── index.html                 # SEO 메타태그 포함
-├── public/
-│   ├── robots.txt
-│   └── sitemap.xml
-├── src/
-│   ├── App.tsx
-│   ├── index.css              # Tailwind + Noto Sans KR
-│   ├── main.tsx
-│   ├── components/
-│   │   ├── Hero.tsx           # 히어로 섹션
-│   │   ├── Features.tsx       # 핵심 기능 소개
-│   │   ├── HowItWorks.tsx     # 3단계 사용 방법
-│   │   ├── Preview.tsx        # 이메일 미리보기
-│   │   ├── Generator.tsx      # 스크립트 생성 폼 + 결과
-│   │   └── Footer.tsx         # 푸터 (GitHub/LinkedIn)
-│   └── lib/
-│       └── generateScript.ts  # 스크립트 생성 핵심 로직
-├── .prettierrc
-├── vite.config.ts
-└── package.json
-```
 
 ---
 
@@ -175,16 +136,6 @@ pnpm build
 # 빌드 결과물 미리보기
 pnpm preview
 ```
-
----
-
-## Vercel 배포
-
-1. [Vercel](https://vercel.com)에서 GitHub 저장소 연결
-2. Framework Preset: **Vite** 선택
-3. Build Command: `pnpm build`
-4. Output Directory: `dist`
-5. **Deploy** 클릭
 
 ---
 
