@@ -109,13 +109,14 @@ function generateAiSummary(issues) {
       \`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=\${config.geminiApiKey}\`,
       options
     );
-    if (res.getResponseCode() !== 429) break;
-    Logger.log(\`Gemini 할당량 초과, 30초 후 재시도 (\${attempt + 1}/2)\`);
-    Utilities.sleep(30000);
+    const code = res.getResponseCode();
+    if (code === 200) break;
+    Logger.log(\`Gemini API 오류 (\${code}), 재시도 \${attempt + 1}/3: \${res.getContentText()}\`);
+    if (attempt < 2) Utilities.sleep(code === 429 ? 30000 : 5000);
   }
 
   if (res.getResponseCode() !== 200) {
-    Logger.log(\`Gemini API 오류: \${res.getContentText()}\`);
+    Logger.log(\`Gemini AI 요약 3회 실패 (\${res.getResponseCode()}) - AI 요약 없이 이메일 발송\`);
     return null;
   }
 
