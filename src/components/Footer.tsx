@@ -19,7 +19,7 @@ export default function Footer() {
 
         <div className="flex justify-center gap-4 mb-6">
           <a
-            href="https://github.com/umsungjun"
+            href="https://github.com/umsungjun/jira-weekly-mail"
             target="_blank"
             rel="noreferrer"
             aria-label="GitHub"
@@ -41,7 +41,7 @@ export default function Footer() {
         <p className="text-xs text-gray-500 mb-3">
           ⭐ 유용하게 사용하셨다면{" "}
           <a
-            href="https://github.com/umsungjun/jira-reporter"
+            href="https://github.com/umsungjun/jira-weekly-mail"
             target="_blank"
             rel="noreferrer"
             className="text-yellow-400 hover:underline font-medium"
