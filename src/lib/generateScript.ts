@@ -43,14 +43,17 @@ const STATUS_KO = {
   Backlog: "백로그",
 };
 
-const DONE_STATUSES = ["done", "resolved", "closed", "complete", "완료", "해결됨", "종료"];
-const ONGOING_STATUSES = ["in progress", "in review", "testing", "review", "진행", "검토", "테스트"];
+const DONE_STATUSES = ["done", "resolved", "closed", "complete", "완료", "해결", "종료"];
+const ONGOING_STATUSES = ["in progress", "in review", "testing", "review", "진행", "검토", "테스트", "배포"];
+const TODO_STATUSES = ["selected for development", "개발하기로 선택됨", "개발 예정"];
 
+// done/ongoing/todo로 명시 매칭된 상태만 분류, 나머지(Backlog·NOT TASK 등)는 null로 메일에서 제외
 function getStatusGroup(name) {
   const s = (name || "").toLowerCase();
   if (DONE_STATUSES.some((k) => s.includes(k))) return "done";
   if (ONGOING_STATUSES.some((k) => s.includes(k))) return "ongoing";
-  return "todo";
+  if (TODO_STATUSES.some((k) => s.includes(k))) return "todo";
+  return null;
 }
 
 function getStatusBadge(name) {
@@ -59,8 +62,10 @@ function getStatusBadge(name) {
       return "background:#E3FCEF;color:#006644;";
     case "ongoing":
       return "background:#DEEBFF;color:#0747A6;";
-    default:
+    case "todo":
       return "background:#FFF7D6;color:#974F0C;";
+    default:
+      return "background:#F0F0F0;color:#888;";
   }
 }
 
@@ -229,7 +234,8 @@ function buildHtml(issues, weekStart, weekEnd) {
   const ongoing = issues.filter((i) => getStatusGroup(i.fields.status?.name) === "ongoing");
   const todo = issues.filter((i) => getStatusGroup(i.fields.status?.name) === "todo");
 
-  const aiSummary = generateAiSummary(issues);
+  // 미분류 이슈가 AI 요약·건수에 새지 않도록 분류된 이슈만 전달
+  const aiSummary = generateAiSummary([...done, ...ongoing, ...todo]);
 
   return \`<!DOCTYPE html>
 <html>
