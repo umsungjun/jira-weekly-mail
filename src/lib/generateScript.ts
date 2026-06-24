@@ -131,7 +131,7 @@ function generateAiSummary(issues) {
 
 function fetchIssues() {
   const token = Utilities.base64Encode(\`\${config.email}:\${config.apiToken}\`);
-  const jql = \`assignee = "\${config.email}" AND (status = "Selected for Development" OR created >= startOfWeek() OR updated >= startOfWeek()) ORDER BY updated DESC\`;
+  const jql = \`assignee = "\${config.email}" AND created >= -500d AND updated >= startOfWeek() ORDER BY created DESC\`;
   const fields = [
     "summary",
     "status",
