@@ -10,6 +10,15 @@ const LinkedinIcon = () => (
   </svg>
 );
 
+// Lucide globe(ISC)
+const GlobeIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+    <path d="M2 12h20" />
+  </svg>
+);
+
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-400 py-12">
@@ -35,6 +44,15 @@ export default function Footer() {
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors text-sm"
           >
             <LinkedinIcon /> LinkedIn
+          </a>
+          {/* noreferrer 를 빼야 umsungjun.com 유입 경로에 이 사이트가 잡힌다 */}
+          <a
+            href="https://umsungjun.com"
+            target="_blank"
+            rel="noopener"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors text-sm"
+          >
+            <GlobeIcon /> 만든 사람
           </a>
         </div>
 
